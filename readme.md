@@ -1,35 +1,50 @@
 # 🚀 WERA Sharp IR Library (ESP32)
 
-Library Arduino untuk membaca sensor **Sharp IR GP2Y0A21YK0F** menggunakan **ESP32** dengan pendekatan **regresi matematis berbasis data eksperimen (Power & Inverse)** + **median filtering** untuk hasil yang stabil dan akurat.
+Arduino library for reading the **Sharp IR distance sensor GP2Y0A21YK0F** using **ESP32**, with **data-driven regression models (Power & Inverse)** and **median filtering** for stable and accurate distance measurement.
 
 ---
 
 ## ✨ Features
 
-* 📏 Output jarak dalam satuan cm
-* 📊 Regresi **Power Model** (best fit dari eksperimen)
-* 📈 Regresi **Inverse Model** (sesuai karakter sensor IR)
-* 🔇 Median filtering (25 sampel) untuk reduksi noise
-* ⚡ Optimized untuk ESP32 (ADC 12-bit + attenuation)
-* 🎯 Akurasi tinggi (R² ≈ 0.9997)
+* 📏 Distance output in centimeters (cm)
+* 📊 **Power Regression Model** (best fit from experimental data)
+* 📈 **Inverse Regression Model** (matches IR sensor characteristics)
+* 🔇 Median filtering (25 samples) for noise reduction
+* ⚡ Optimized for ESP32 (12-bit ADC + attenuation)
+* 🎯 High accuracy (R² ≈ 0.9997)
+
+---
+
+## 📌 Sensor Used
+
+This library is specifically designed and calibrated for:
+
+> **Sharp GP2Y0A21YK0F Infrared Distance Sensor**
+
+### Sensor Characteristics:
+
+* Measurement range: **10 cm – 80 cm**
+* Output: Analog voltage (non-linear)
+* Highly sensitive to noise and surface reflectivity
+* Requires calibration for accurate distance estimation
 
 ---
 
 ## 📦 Installation
 
-### Manual Install
+### Manual Installation
 
 ```bash
-git clone https://github.com/newbiei/ESP32_SharpIR.git
+git clone https://github.com/username/WERA_SharpIR.git
 ```
 
-Pindahkan ke:
+Move the folder to:
 
 ```
 Documents/Arduino/libraries/
 ```
 
-Lalu restart Arduino IDE.
+Restart Arduino IDE.
 
 ---
 
@@ -45,8 +60,8 @@ void setup() {
 }
 
 void loop() {
-  float d_power   = sensor.readCM();    // Regresi Power
-  float d_inverse = sensor.readCMv2();  // Regresi Inverse
+  float d_power   = sensor.readCM();    // Power regression
+  float d_inverse = sensor.readCMv2();  // Inverse regression
 
   Serial.print("Power: ");
   Serial.print(d_power);
@@ -58,40 +73,40 @@ void loop() {
 }
 ```
 
-📌 Di folder `examples/` tersedia:
+📌 See the `examples/` folder for:
 
-* mode **Regresi Power**
-* mode **Regresi Inverse**
-* contoh **switching mode via Serial**
-
----
-
-## 📊 Model Regresi
-
-### 🔹 Regresi Pangkat (Power)
-
-```
-ADC = 22581.6 × jarak^(-0.9184)
-```
-
-Inverse:
-
-```
-jarak = (ADC / 22581.6)^(1 / -0.9184)
-```
+* Power regression usage
+* Inverse regression usage
+* Mode switching via Serial
 
 ---
 
-### 🔹 Regresi Inverse
+## 📊 Regression Models
+
+### 🔹 Power Regression
 
 ```
-ADC = 29103.3 / (jarak + 0.89) + 49.57
+ADC = 22581.6 × distance^(-0.9184)
 ```
 
-Inverse:
+Inverse form:
 
 ```
-jarak = 29103.3 / (ADC - 49.57) - 0.89
+distance = (ADC / 22581.6)^(1 / -0.9184)
+```
+
+---
+
+### 🔹 Inverse Regression
+
+```
+ADC = 29103.3 / (distance + 0.89) + 49.57
+```
+
+Inverse form:
+
+```
+distance = 29103.3 / (ADC - 49.57) - 0.89
 ```
 
 ---
@@ -103,53 +118,53 @@ jarak = 29103.3 / (ADC - 49.57) - 0.89
 | Power   | ~0.0745 | ~0.0745 | ~0.31% |
 | Inverse | ~0.1536 | ~0.1536 | ~0.64% |
 
-📌 Kedua model memiliki akurasi sangat tinggi (R² ≈ 0.9997)
-
-📌 Pada dataset eksperimen, **Regresi Power memberikan error lebih kecil**
+📌 Both models achieve very high accuracy (R² ≈ 0.9997)
+📌 The **Power model shows lower error** on the experimental dataset
 
 ---
 
 ## ⚙️ Hardware
 
 * ESP32
-* Sharp IR GP2Y0A21YK0F
-* Supply sensor: **5V**
-* Output analog ke ESP32 (ADC 12-bit)
+* Sharp GP2Y0A21YK0F
+* Sensor supply: **5V**
+* ADC resolution: 12-bit (0–4095)
 
 ---
 
 ## 🧠 How It Works
 
-1. Sensor membaca nilai analog (ADC 0–4095)
-2. Dilakukan **median filtering (25 sampel)**
-3. Nilai dikonversi ke jarak menggunakan model regresi
-4. Output dibatasi pada range **10–80 cm**
+1. Reads analog voltage from the IR sensor (ADC)
+2. Applies **median filtering (25 samples)**
+3. Converts ADC value into distance using regression models
+4. Clamps output to valid range (**10–80 cm**)
 
 ---
 
 ## ⚠️ Notes
 
-* Nilai di bawah ~10 cm dan di atas ~80 cm kurang stabil
-* Pastikan pembacaan ADC stabil (hindari noise supply)
-* Gunakan model sesuai kebutuhan:
+* Measurements below 10 cm and above 80 cm are less reliable
+* Sensor output is non-linear → regression is required
+* Noise may occur due to power supply or environment
+* Choose model based on use case:
 
-  * Power → akurasi terbaik (hasil eksperimen)
-  * Inverse → representasi karakter sensor
+  * Power → best experimental accuracy
+  * Inverse → physically representative model
 
 ---
 
-## 🔥 Use Case
+## 🔥 Use Cases
 
-* 🤖 Robot navigasi
+* 🤖 Robotics navigation (WERA)
 * 🚧 Obstacle detection
-* 🧠 Smart sensing system
+* 🧠 Smart sensing systems
 * 📡 IoT monitoring
 
 ---
 
 ## 📸 Preview
 
-Tambahkan grafik hasil regresi atau foto perangkat:
+Add regression graph or hardware setup image:
 
 ```
 docs/graph.png
@@ -167,17 +182,17 @@ Project: WERA (Whiteboard Eraser Automation)
 
 ## 📜 License
 
-MIT License — bebas digunakan & dikembangkan.
+MIT License — free to use and modify.
 
 ---
 
 ## ⭐ Support
 
-Kalau project ini membantu:
+If this project helps you:
 
-* ⭐ Star repo
-* 🍴 Fork
-* 🐛 Open issue jika ada bug
+* ⭐ Star this repository
+* 🍴 Fork it
+* 🐛 Open an issue for bugs or suggestions
 
 ---
 
