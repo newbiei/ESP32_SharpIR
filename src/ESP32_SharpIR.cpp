@@ -1,6 +1,6 @@
-#include "WERA_SharpIR.h"
+#include "ESP32_SharpIR.h"
 
-WERASharpIR::WERASharpIR(uint8_t pin) {
+ESP32_SharpIR::ESP32_SharpIR(uint8_t pin) {
   _pin = pin;
   pinMode(_pin, INPUT);
 
@@ -13,7 +13,7 @@ WERASharpIR::WERASharpIR(uint8_t pin) {
 // =======================
 // Median Filter
 // =======================
-int WERASharpIR::medianRead(int samples) {
+int ESP32_SharpIR::medianRead(int samples) {
   const int MAX_SAMPLES = 50;
   int buf[MAX_SAMPLES];
 
@@ -41,7 +41,7 @@ int WERASharpIR::medianRead(int samples) {
 // =======================
 // Convert to distance (CM)
 // =======================
-float WERASharpIR::readCM() {
+float ESP32_SharpIR::readCM() {
   int medianRaw = medianRead(25);
 
   // Regresi Pangkat: ADC = 22581.6 * jarak^(-0.9184), R² = 0.9997
@@ -59,7 +59,7 @@ float WERASharpIR::readCM() {
   return distance_cm;
 }
 
-float WERASharpIR::readCMv2() {
+float ESP32_SharpIR::readCMv2() {
   int medianRaw = medianRead(25);
 
   // Regresi Inverse: ADC = 29103.3 / (jarak + 0.89) + 49.57, R² = 0.9997
