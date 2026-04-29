@@ -1,6 +1,6 @@
-#include <WERA_SharpIR.h>
+#include <ESP32_SharpIR.h>
 
-WERASharpIR sensor1(35);
+ESP32_SharpIR sensor1(35);
 
 int mode = 1; // default mode (1 = power, 2 = inverse)
 
