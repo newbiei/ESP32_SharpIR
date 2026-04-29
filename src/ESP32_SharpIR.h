@@ -5,8 +5,8 @@
 
 class ESP32_SharpIR {
   public:
-    WERASharpIR(uint8_t pin);
-    float readCM(); // hasil jarak dalam cm (integer)
+    ESP32_SharpIR(uint8_t pin);
+    float readCM();
     float readCMv2();
   private:
     uint8_t _pin;
